@@ -1,7 +1,8 @@
 import { useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { AuthContext } from '../../contexts/auth' 
+
 import './signin.css'
-import { AuthContext} from '../../contexts/auth'
 
 import logo from '../../assets/logo.png'
 
@@ -10,7 +11,7 @@ export default function SignIn(){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const { signIn } = useContext()
+    const { signIn } = useContext(AuthContext)
 
     function handleSignIn(e){
         e.preventDefault();

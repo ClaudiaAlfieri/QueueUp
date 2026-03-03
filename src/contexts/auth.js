@@ -1,6 +1,6 @@
 import { useState, createContext, useEffect} from 'react'
 import { auth, db } from '../services/firebaseConnection'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 
 import { useNavigate } from 'react-router-dom'
@@ -98,6 +98,13 @@ function AuthProvider({ children}){
         localStorage.setItem('@ticketsPRO', JSON.stringify(data))
     }
 
+    async function logout(){
+        await signOut(auth);
+        localStorage.removeItem('@ticketsPRO');
+        setUser(null);
+    }
+
+
     return(
         <AuthContext.Provider
             value={{
@@ -105,6 +112,7 @@ function AuthProvider({ children}){
                 user,
                 signIn,
                 signUp,
+                logout,
                 loadingAuth,
                 loading
             }}

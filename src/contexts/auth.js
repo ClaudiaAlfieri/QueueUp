@@ -12,8 +12,25 @@ export const AuthContext = createContext({});
 function AuthProvider({ children}){
     const [user, setUser] = useState(null)
     const [loadingAuth, setLoadingAuth] = useState(false);
+    const [ loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
+
+
+    useEffect(() =>{
+        async function loadUser(){
+            const storageUser = localStorage.getItem('@ticketsPRO')
+
+            if(storageUser){
+                setUser(JSON.parse(storageUser))
+                setLoading(false);
+            }
+
+
+            setLoading(false);
+        }
+        loadUser();
+    }, [])
 
 
     async function signIn(email, password){
@@ -88,7 +105,8 @@ function AuthProvider({ children}){
                 user,
                 signIn,
                 signUp,
-                loadingAuth
+                loadingAuth,
+                loading
             }}
         >
             { children}

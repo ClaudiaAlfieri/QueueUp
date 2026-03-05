@@ -12,8 +12,24 @@ import './profile.css'
 export default function Profile(){
     const {user, storageUser, setUser, logout} = useContext(AuthContext);
     const [avatarUrl, setAvartarUrl] = useState(user && user.avatarUrl)
+    const [imageAvatar, setImageAvatar] = useState(null)
     const [nome, setNome] = useState(user && user.nome)
     const [email, setEmail] = useState(user && user.email)
+
+    function handleFile(e){
+        if(e.target.files[0]){
+            const image = e.target.files[0];
+
+            if(image.type === 'image.png' || image.type === 'image/png'){
+                setImageAvatar(image)
+                setAvartarUrl(URL.createObjectURL(image))
+            } else{
+                alert("Envie uma imagem do tipo PNG ou JPEG")
+                setImageAvatar(null);
+                return;
+            }
+        }
+    }
     
     return(
         <div>
@@ -30,7 +46,7 @@ export default function Profile(){
                             <span>
                                 <FiUpload color="#fff" size={25} />
                             </span>
-                            <input type="file" accept="image/*"/> <br/>
+                            <input type="file" accept="image/*" onChhange={handleFile}/> <br/>
                             {avatarUrl === null ?(
                                 <img src={avatar} alt="Foto do perfil" width={250} height={250} />):(<img src={avatarUrl} alt="Foto do perfil" width={250} height={250} />)
                             }

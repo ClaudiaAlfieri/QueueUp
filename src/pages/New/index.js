@@ -8,6 +8,8 @@ import {AuthContext} from '../../contexts/auth'
 import { db } from '../../services/firebaseConnection'
 import {collection, getDocs, getDoc, doc, addDoc} from 'firebase/firestore'
 
+import { useParams } from 'react-router-dom'
+
 import {toast} from 'react-toastify'
 
 import './new.css';
@@ -16,6 +18,7 @@ const listRef = collection(db, "customers");
 
 export default function New(){
   const { user } = useContext(AuthContext);
+  const { id } = useParams();
 
   const [customers, setCustomers] = useState([])
   const [loadCustomer, setLoadCustomer] = useState(true);
@@ -24,6 +27,7 @@ export default function New(){
   const [complemento, setComplemento] = useState('')
   const [assunto, setAssunto] = useState('Suporte')
   const [status, setStatus] = useState('Aberto')
+  const [idCustomer, setIdCustomer] = useState(false)
 
   useEffect(() => {
     async function loadCustomers(){
@@ -48,6 +52,10 @@ export default function New(){
         setCustomers(lista);
         setLoadCustomer(false);
 
+        if(id){
+          loadId(lista);
+        }
+
       })
       .catch((error) => {
         console.log("ERRRO AO BUSCAR OS CLIENTES", error)
@@ -57,7 +65,25 @@ export default function New(){
     }
 
     loadCustomers();    
-  }, [])
+  }, [id])
+
+  async function loadId(lista){
+      const docRef = doc(db, 'chamados', id);
+      await getDoc(docRef)
+    .then((snapshot)=>{
+        setAssunto(snapshot.data().assunto);
+        setStatus(snapshot.data().status);
+        setComplemento(snapshot.data().complemento);
+
+        let index = lista.findIndex(item => item.id === snapshot.data().clienteId);
+        setCustomerSelected(index);
+        setIdCustomer(true);
+    }) 
+  .catch((error)=>{
+    console.log("Erro ao buscar o chamado", error);
+    setIdCustomer(false);
+  }) 
+}
 
 
   function handleOptionChange(e){
@@ -75,6 +101,11 @@ export default function New(){
 
   async function handleRegister(e){
     e.preventDefault();
+
+    if(idCustomer){
+      alert("Editando chamado")
+      return;
+    }
 
     //Registrar chamado
 

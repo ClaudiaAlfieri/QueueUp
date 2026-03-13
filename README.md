@@ -1,70 +1,100 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 📋 QueueUp
 
-## Available Scripts
+A support ticket management system built with **React** as part of a React learning journey. This project demonstrates how to build a full-featured helpdesk-style app with user authentication, real-time data, and complete ticket control 🎫.
 
-In the project directory, you can run:
+## 🚀 Features
 
-### `npm start`
+- 🔐 User authentication (login & register)
+- ➕ Create, edit and track support tickets
+- ⚡ Real-time updates with Firestore
+- 📄 Paginated ticket listing
+- 🔍 Ticket detail modal
+- 👤 User profile with avatar upload
+- 🏢 Customer registration
+- 🔒 Protected routes for authenticated users
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🛠️ Tech Stack
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- ⚛️ React
+- 🧭 React Router DOM
+- 🎨 Custom CSS
+- 🔥 Firebase (Authentication, Firestore & Storage)
+- 🍞 React Toastify
+- 📅 date-fns
+- 🎯 React Icons
 
-### `npm test`
+## 📦 Installation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+git clone https://github.com/yourusername/queueup.git
+cd queueup
+npm install
+```
 
-### `npm run build`
+### 🔑 Firebase Configuration
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Create a project at [Firebase Console](https://console.firebase.google.com/)
+2. Enable **Authentication** (Email/Password), **Firestore Database** and **Firebase Storage**
+3. Create a `firebaseConnection.js` file in the services directory with your Firebase config:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```js
+import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
+import { getStorage } from 'firebase/storage'
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+const firebaseConfig = {
+  apiKey: "your_api_key",
+  authDomain: "your_auth_domain",
+  projectId: "your_project_id",
+  storageBucket: "your_storage_bucket",
+  messagingSenderId: "your_messaging_sender_id",
+  appId: "your_app_id"
+}
 
-### `npm run eject`
+const app = initializeApp(firebaseConfig)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+export const auth = getAuth(app)
+export const db = getFirestore(app)
+export const storage = getStorage(app)
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+4. Start the development server:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm start
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+The app will open at `http://localhost:3000` 🚀
 
-## Learn More
+## 🎯 How to Use
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Authentication:
+- Register a new account or log in with an existing one
+- Protected routes ensure only authenticated users can access the system
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Ticket Management:
+- ➕ Click **"Novo chamado"** to open a new ticket
+- 🔍 Click the **search icon** to view ticket details in a modal
+- ✏️ Click the **edit icon** to update an existing ticket
+- 📄 Use **"Buscar mais"** to load more tickets
 
-### Code Splitting
+### Profile:
+- 👤 Update your display name
+- 🖼️ Upload a profile avatar
+- 🚪 Click **"Sair"** to log out
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Customers:
+- 🏢 Register clients with company name, CNPJ, and address
 
-### Analyzing the Bundle Size
+## 👩‍💻 Author
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+This project was developed by Cláudia Alfieri as part of a React learning journey.
 
-### Making a Progressive Web App
+## 📝 Contribution 🤝
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Contributions are welcome through pull requests!
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Made with ❤️ and React

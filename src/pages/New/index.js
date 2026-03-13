@@ -6,11 +6,11 @@ import { FiPlusCircle} from 'react-icons/fi'
 
 import {AuthContext} from '../../contexts/auth'
 import { db } from '../../services/firebaseConnection'
-import {collection, getDocs, getDoc, doc, addDoc} from 'firebase/firestore'
+import {collection, getDocs, getDoc, doc, addDoc, updateDoc} from 'firebase/firestore'
 
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
-import {toast} from 'react-toastify'
+import { toast } from 'react-toastify'
 
 import './new.css';
 
@@ -19,6 +19,7 @@ const listRef = collection(db, "customers");
 export default function New(){
   const { user } = useContext(AuthContext);
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [customers, setCustomers] = useState([])
   const [loadCustomer, setLoadCustomer] = useState(true);
@@ -28,6 +29,7 @@ export default function New(){
   const [assunto, setAssunto] = useState('Suporte')
   const [status, setStatus] = useState('Aberto')
   const [idCustomer, setIdCustomer] = useState(false)
+  
 
   useEffect(() => {
     async function loadCustomers(){
@@ -67,23 +69,26 @@ export default function New(){
     loadCustomers();    
   }, [id])
 
-  async function loadId(lista){
-      const docRef = doc(db, 'chamados', id);
-      await getDoc(docRef)
-    .then((snapshot)=>{
-        setAssunto(snapshot.data().assunto);
-        setStatus(snapshot.data().status);
-        setComplemento(snapshot.data().complemento);
 
-        let index = lista.findIndex(item => item.id === snapshot.data().clienteId);
-        setCustomerSelected(index);
-        setIdCustomer(true);
-    }) 
-  .catch((error)=>{
-    console.log("Erro ao buscar o chamado", error);
-    setIdCustomer(false);
-  }) 
-}
+  async function loadId(lista){
+    const docRef = doc(db, "chamados", id);
+    await getDoc(docRef)
+    .then((snapshot) => {
+      setAssunto(snapshot.data().assunto)
+      setStatus(snapshot.data().status)
+      setComplemento(snapshot.data().complemento);
+
+
+      let index = lista.findIndex(item => item.id === snapshot.data().clienteId)
+      setCustomerSelected(index);
+      setIdCustomer(true);
+
+    })
+    .catch((error) => {
+      console.log(error);
+      setIdCustomer(false);
+    })
+  }
 
 
   function handleOptionChange(e){
@@ -103,31 +108,50 @@ export default function New(){
     e.preventDefault();
 
     if(idCustomer){
-      alert("Editando chamado")
+      //Atualizando chamado
+      const docRef = doc(db, "chamados", id)
+      await updateDoc(docRef, {
+        cliente: customers[customerSelected].nomeFantasia,
+        clienteId: customers[customerSelected].id,
+        assunto: assunto,
+        complemento: complemento,
+        status: status,
+        userId: user.uid,
+      })
+      .then(() => {
+        toast.info("Chamado atualizado com sucesso!")
+        setCustomerSelected(0);
+        setComplemento('');
+        navigate('/dashboard')
+      })
+      .catch((error) => {
+        toast.error("Ops erro ao atualizar esse chamado!")
+        console.log(error);
+      })
+
       return;
     }
 
-    //Registrar chamado
 
+    //Registrar um chamado
     await addDoc(collection(db, "chamados"), {
       created: new Date(),
       cliente: customers[customerSelected].nomeFantasia,
       clienteId: customers[customerSelected].id,
       assunto: assunto,
       complemento: complemento,
-      status: status,      
-      userId: user.uid 
+      status: status,
+      userId: user.uid,
     })
     .then(() => {
-      toast.success("Chamado registrado");
-      setComplemento('');
-      setCustomerSelected(0);
+      toast.success("Chamado registrado!")
+      setComplemento('')
+      setCustomerSelected(0)
     })
     .catch((error) => {
-      toast.error("Erro ao registrar chamado.");
-      console.error("ERRRO AO REGISTRAR O CHAMADO", error);
+      toast.error("Ops erro ao registrar, tente mais tarde!")
+      console.log(error);
     })
-
   }
 
   return(
@@ -135,7 +159,7 @@ export default function New(){
       <Header/>
 
       <div className="content">
-        <Title name="Novo chamado">
+        <Title name={id ? "Editando Chamado" : "Novo Chamado"}>
           <FiPlusCircle size={25}/>
         </Title>
 

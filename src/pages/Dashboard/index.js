@@ -6,18 +6,58 @@ import Title from '../../components/Title'
 import { FiPlus, FiMessageSquare, FiSearch, FiEdit2 } from 'react-icons/fi' 
 
 import { Link} from 'react-router-dom'
+import { collection, getDocs, orderBy, limit, startAfter, query } from 'firebase/firestore'
+import { db } from '../../services/firebaseConnection'
 
 import './dashboard.css'
+
+const listRef = collection(db, "chamados");
 
 export default function Dashboard(){
   const { logout } = useContext(AuthContext);
 
   const [chamados, setChamados] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isEmpty, setIsEmpty] = useState(false);
 
-  async function handleLogout(){
-    await logout();
+  useEffect(() =>{
+    async function loadChamados(){
+      const q = query(listRef, orderBy('created', 'desc'), limit(5));
+      const querySnapshot = await getDocs(q)
+      await updateState(querySnapshot);
+
+      setLoading(false);
+
+    }
+    loadChamados();
+
+    return () => {}
+
+  }, [])
+
+  async function updateState(querySanapshot){
+    const isCollectionEmpty = querySanapshot.size === 0;
+    if(!isCollectionEmpty){
+      let lista = [];
+      querySanapshot.forEach((doc) => {
+        lista.push({
+          id: doc.id,
+          assunto: doc.data().assunto,
+          cliente: doc.data().cliente,
+          clienteId: doc.data().clienteId,
+          created: doc.data().created,
+          status: doc.data().status,
+          complemento: doc.data().complemento      
+        });
+      });
+      setChamados(chamados => [...chamados, ...lista]);
+    }
+
+    else{
+      setIsEmpty(true);
+    }
   }
+
 
   return(
     <div>
